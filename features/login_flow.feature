@@ -18,3 +18,4 @@ Scenario: Access Denied as Locked out user
   When I log on as "locked_out_user" with pw "secret_sauce"
   Then I should see error "Sorry, this user has been locked out."
 
+

@@ -1,6 +1,6 @@
 import os
+
 import pytest
-from playwright.sync_api import Page
 
 # -------------------------
 # Runtime switches (env)
@@ -9,6 +9,7 @@ HEADLESS = os.getenv("HEADLESS", "true").lower() == "true"
 SLOW_MO = int(os.getenv("SLOW_MO", "0"))
 RECORD_VIDEO = os.getenv("RECORD_VIDEO", "false").lower() == "true"
 BASE_URL = os.getenv("BASE_URL", "https://www.saucedemo.com/")
+
 
 # -------------------------
 # Browser launch config
