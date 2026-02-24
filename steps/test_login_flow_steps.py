@@ -1,37 +1,38 @@
-import pytest
-from playwright.sync_api import Page, expect
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from pages.browse_page import BrowsePage
-from pages.login_page import LoginPage
+from abilities.browse_the_web import BrowseTheWeb
+from questions.items_displayed import ItemsDisplayed
+from questions.login_error_msg import LoginErrorMsg
+from questions.text_of import TextOf
+from tasks.login_to_swag_labs import LogIn
+from tasks.nav_to_login import NavToLogin
+from ui.login_page import LoginPage
 
 scenarios("../features/login_flow.feature")
 
 
-@pytest.fixture(autouse=True)
-def login_page_obj(page: Page):
-    login_page = LoginPage(page)
-    return login_page
-
-
 @given("I am on the login page")
-def step_nav_to_login(login_page_obj):
-    login_page_obj.goto()
+def step_nav_to_login(actor):
+    actor.attempts_to(NavToLogin())
+
+    logo_text = actor.asks_for(TextOf(LoginPage.LOGO))
+    assert logo_text == "Swag Labs"
 
 
 @when(parsers.parse('I log on as "{username}" with pw "{password}"'))
-def step_login_process(login_page_obj, username, password):
-    login_page_obj.perform_login(username, password)
+def step_nav_to_log_in(actor, username: str, password: str):
+    actor.attempts_to(
+        LogIn(username, password),
+    )
 
 
 @then("I should be taken to my product browse page")
-def step_successful_login(login_page_obj, page: Page):
-    assert "/inventory.html" in login_page_obj.get_url()
+def step_successful_login(actor):
+    assert "/inventory.html" in actor.ability_to(BrowseTheWeb).page.url
 
 
 @then("Be shown normal products")
-def step_products_displayed_are_normal(page: Page):
-    browse_page = BrowsePage(page)
+def step_products_displayed_are_normal(actor):
     expected_normal_items = [
         "Sauce Labs Backpack",
         "Sauce Labs Bike Light",
@@ -40,10 +41,13 @@ def step_products_displayed_are_normal(page: Page):
         "Sauce Labs Onesie",
         "Test.allTheThings() T-Shirt (Red)",
     ]
-    for item in expected_normal_items:
-        assert item in browse_page.item_names()
+
+    actual_items = actor.asks_for(ItemsDisplayed())
+    for item in actual_items:
+        assert item in expected_normal_items, f"Item {item} is not displayed"
 
 
 @then(parsers.parse('I should see error "{error}"'))
-def step_error_is_displayed(login_page_obj, error):
-    expect(login_page_obj.error_container).to_contain_text(error)
+def step_error_is_displayed(actor, error):
+    error_msg = actor.asks_for(LoginErrorMsg())
+    assert error in error_msg

@@ -2,6 +2,10 @@ name: Swag Labs Automation Regression Suite
 on:
   push:
     branches: [ main ]
+
+  pull_request:
+    branches: [ (refactor/screenplay ]
+
   schedule:
     - cron: "0 0 * * *"
 
