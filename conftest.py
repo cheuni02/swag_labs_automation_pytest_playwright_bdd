@@ -1,6 +1,10 @@
 import os
 
 import pytest
+from playwright.sync_api import Page
+
+from abilities.browse_the_web import BrowseTheWeb
+from actors.actor import Actor
 
 # -------------------------
 # Runtime switches (env)
@@ -42,3 +46,15 @@ def browser_context_args(browser_context_args):
         browser_context_args["record_video_dir"] = "videos/"
 
     return browser_context_args
+
+
+# -------------------------
+# Screenplay test fixtures
+# -------------------------
+
+
+@pytest.fixture(autouse=True)
+def actor(page: Page):
+    actor = Actor("WebBrowserActor")
+    actor.can(BrowseTheWeb(page))
+    return actor
