@@ -9,7 +9,7 @@ class Actor:
     def can(self, ability: BrowseTheWeb):
         self.abilities[type(ability)] = ability
 
-    def ability_to(self, ability_cls: str):
+    def ability_to(self, ability_cls: type[BrowseTheWeb]) -> BrowseTheWeb:
         return self.abilities[ability_cls]
 
     def attempts_to(self, *tasks):
