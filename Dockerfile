@@ -1,6 +1,5 @@
 # Use Playwright base image (includes browsers + deps)
-FROM mcr.microsoft.com/playwright:v1.50.0-noble
-
+FROM mcr.microsoft.com/playwright/python:v1.50.0-noble
 
 # Set working directory
 WORKDIR /app
